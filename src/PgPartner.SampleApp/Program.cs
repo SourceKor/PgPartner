@@ -16,7 +16,7 @@ namespace PgPartner.SampleApp
 
             var samples = sampleApp.GetSamples();
 
-            conn.Add(
+            conn.BulkAdd(
                 samples,
                 (mapper, entity) => {
                     mapper.Map("id", entity.Id, NpgsqlDbType.Uuid);
