@@ -20,7 +20,7 @@ namespace PgPartner
         ///     Full database table name. Include double quotes for schema/table names where
         ///     applicable (ex. public."Test", "Test"."HelloWorld", test.sample)
         /// </param>
-        public static void Add<TEntity>
+        public static void BulkAdd<TEntity>
             (
                 this NpgsqlConnection connection,
                 IEnumerable<TEntity> entities,
