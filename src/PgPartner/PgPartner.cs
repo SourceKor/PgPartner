@@ -56,9 +56,25 @@ namespace PgPartner
                         writer.Write(value, dbType);
                     }
                 }
+            }
 
+            try
+            {
                 writer.Complete();
                 writer.Close();
+            }
+            catch (PostgresException pex)
+            {
+                if (pex.Message == "08P01: insufficient data left in message")
+                {
+                    throw new Exception($"Postgres error most likely caused by invalid .NET to NpgsqlDbType mapping. Postgres Exception: {pex.Message}");
+                }
+
+                throw;
+            }
+            finally
+            {
+                writer.Dispose();
             }
         }
 

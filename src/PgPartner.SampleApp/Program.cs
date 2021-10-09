@@ -18,11 +18,11 @@ namespace PgPartner.SampleApp
 
             conn.BulkAdd(
                 samples,
-                (mapper, entity) => {
-                    mapper.Map("id", entity.Id, NpgsqlDbType.Uuid);
-                    mapper.Map("name", entity.Name, NpgsqlDbType.Varchar);
-                    mapper.Map("amount", entity.ItemAmount, NpgsqlDbType.Integer);
-                    mapper.Map("sum", entity.ItemSum, NpgsqlDbType.Numeric);
+                (mapper, sample) => {
+                    mapper.Map("id", sample.Id, NpgsqlDbType.Uuid);
+                    mapper.Map("name", sample.Name, NpgsqlDbType.Text);
+                    mapper.Map("amount", sample.ItemAmount, NpgsqlDbType.Numeric);
+                    mapper.Map("sum", sample.ItemSum, NpgsqlDbType.Numeric);
                 },
                 sampleApp.Schema,
                 sampleApp.Table
