@@ -50,4 +50,4 @@ conn.BulkAdd(
 
 ### Notes
 - To specify quote wrapped schema, table, or columns, simply pass the quotes in directly (see how this is done for "Samples" table in example above)
-- Make sure to correctly specify NpgsqlDbType
+- Make sure to correctly specify association of NpgsqlDbType to .NET CLR type, otherwise you will see various errors.
