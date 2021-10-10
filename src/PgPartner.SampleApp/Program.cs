@@ -22,12 +22,13 @@ namespace PgPartner.SampleApp
                     mapper.Map("id", sample.Id, NpgsqlDbType.Uuid);
                     mapper.Map("name", sample.Name, NpgsqlDbType.Text);
                     mapper.Map("amount", sample.ItemAmount, NpgsqlDbType.Numeric);
-                    mapper.Map("sum", sample.ItemSum, NpgsqlDbType.Numeric);
+                    mapper.Map("sum", sample.ItemSum, NpgsqlDbType.Integer);
                 },
                 sampleApp.Schema,
                 sampleApp.Table
             );
 
+            Console.WriteLine("Done!");
             Console.ReadKey();
         }
     }

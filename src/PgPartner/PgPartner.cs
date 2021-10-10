@@ -1,7 +1,5 @@
 ﻿using Npgsql;
 using NpgsqlTypes;
-using PgPartner.Options;
-using PgPartner.Options.Parsers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,13 +24,11 @@ namespace PgPartner
                 IEnumerable<TEntity> entities,
                 Action<IPgpMapper, TEntity> mapEntity,
                 string schemaName,
-                string tableName,
-                PgPartnerAddOptions copyOption = null
+                string tableName
             )
             where TEntity : class
         {
-            var options = copyOption ?? new PgPartnerAddOptions();
-            var fullTableName = OptionsParser.ParseTableName(schemaName, tableName, options.QuoteTableName);
+            var fullTableName = $"{schemaName}.{tableName}";
 
             var (columnNames, columnValuesCollection) = GetMappingContext(entities, mapEntity);
 

@@ -10,7 +10,7 @@ namespace PgPartner.SampleApp
         private static string CreateSamplesTable = @"
             create extension if not exists ""uuid-ossp"";
 
-            create table public.samples (
+            create table public.""Samples"" (
                 id          uuid default uuid_generate_v4(),
                 name        varchar(200) not null,
                 sum         int null,
@@ -21,10 +21,10 @@ namespace PgPartner.SampleApp
             select *
             from information_schema.tables
             where table_schema = 'public'
-            and table_name = 'samples'";
+            and table_name = 'Samples'";
 
         public string Schema => "public";
-        public string Table => "samples";
+        public string Table => "\"Samples\"";
 
         /// <summary>
         /// Creates the sample table if it doesn't already exist
