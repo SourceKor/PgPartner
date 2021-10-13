@@ -1,5 +1,4 @@
 ﻿using Npgsql;
-using NpgsqlTypes;
 using PgPartner.SampleApp.Models;
 using System;
 using System.Collections.Generic;
