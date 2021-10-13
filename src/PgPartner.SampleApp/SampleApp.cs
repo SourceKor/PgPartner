@@ -2,6 +2,8 @@
 using PgPartner.SampleApp.Models;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 namespace PgPartner.SampleApp
 {
@@ -43,13 +45,20 @@ namespace PgPartner.SampleApp
         }
 
         public IEnumerable<Sample> GetSamples() =>
-            new List<Sample>()
-            {
-                new Sample { Id = Guid.NewGuid(), Name = "Test", ItemSum = 200, ItemAmount = 10 },
-                new Sample { Id = Guid.NewGuid(), Name = "Test 2", ItemSum = 400, ItemAmount = 20 },
-                new Sample { Id = Guid.NewGuid(), Name = "Test 3", ItemSum = 800, ItemAmount = 30 },
-                new Sample { Id = Guid.NewGuid(), Name = "Test 4", ItemSum = 1200, ItemAmount = 40 },
-                new Sample { Id = Guid.NewGuid(), Name = "Test 5", ItemSum = 2400, ItemAmount = 50 }
-            };
+            File.ReadAllLines(Path.GetFullPath("./MockData/MOCK_DATA.csv"))
+                    .Skip(1)
+                    .Select(s =>
+                    {
+                        var values = s.Split(',');
+
+                        return new Sample
+                        {
+                            Id = new Guid(values[0]),
+                            Name = values[1],
+                            ItemSum = Convert.ToInt32(string.IsNullOrWhiteSpace(values[2]) ? null : values[2]),
+                            ItemAmount = Convert.ToDecimal(string.IsNullOrWhiteSpace(values[3]) ? null : values[3])
+                        };
+                    })
+                    .ToList(); // Ensures we're returning all results at once and not defering until enumeration is necessary
     }
 }

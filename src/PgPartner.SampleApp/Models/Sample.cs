@@ -8,8 +8,8 @@ namespace PgPartner.SampleApp.Models
 
         public string Name { get; set; }
 
-        public int ItemSum { get; set; }
+        public int? ItemSum { get; set; }
 
-        public decimal ItemAmount { get; set;  }
+        public decimal? ItemAmount { get; set;  }
     }
 }
