@@ -9,4 +9,10 @@
     <ProjectReference Include="..\PgPartner\PgPartner.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="MockData\MOCK_DATA.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
