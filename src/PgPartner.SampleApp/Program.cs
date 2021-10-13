@@ -23,6 +23,11 @@ namespace PgPartner.SampleApp
                     mapper.Map("name", sample.Name, NpgsqlDbType.Text);
                     mapper.Map("amount", sample.ItemAmount, NpgsqlDbType.Numeric);
                     mapper.Map("sum", sample.ItemSum, NpgsqlDbType.Integer);
+                    mapper.Map("created", sample.Created, NpgsqlDbType.Timestamp);
+                    mapper.Map("created_date", sample.CreatedDate, NpgsqlDbType.TimestampTz);
+                    mapper.Map("test1", sample.Test1, NpgsqlDbType.Bytea);
+                    mapper.Map("test2", sample.Test2, NpgsqlDbType.Boolean);
+                    mapper.Map("test3", sample.Test3, NpgsqlDbType.Inet);
                 },
                 sampleApp.Schema,
                 sampleApp.Table
