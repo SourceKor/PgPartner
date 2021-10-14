@@ -13,12 +13,20 @@
     <IncludeSymbols>True</IncludeSymbols>
     <PackageTags>postgres, postgresql, npgsql, npgsql-copy, postgresql-copy, bulkadd</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageIcon>PgPartner.png</PackageIcon>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Npgsql" Version="5.0.7" />
     <PackageReference Include="System.Collections" Version="4.3.0" />
     <PackageReference Include="System.Runtime" Version="4.3.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\images\PgPartner.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>
