@@ -12,6 +12,7 @@
     <IncludeSource>True</IncludeSource>
     <IncludeSymbols>True</IncludeSymbols>
     <PackageTags>postgres, postgresql, npgsql, npgsql-copy, postgresql-copy, bulkadd</PackageTags>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
