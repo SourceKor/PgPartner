@@ -1,23 +1,41 @@
 ﻿using Npgsql;
-using NpgsqlTypes;
+using PgPartner.Operations;
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Threading.Tasks;
 
 namespace PgPartner
 {
     public static class PgPartner
     {
-        private const string CopyCommand = "copy {0} ({1}) from stdin binary";
+        /// <summary>
+        /// Asynchronously adds entities to a target table using Postgres COPY command
+        /// </summary>
+        /// <param name="entities">Entities to add into the destination table</param>
+        /// <param name="mapEntity">Map action to execute for a single entity when entites are being added to the destination table</param>
+        /// <param name="schemaName">Destination schema to add entities into. If schema name requires double quotes, add them as escaped quotes in the string being passed in.</param>
+        /// <param name="tableName">Destination table to add entities into. If table name requires double quotes, add them as escaped quotes in the string being passed in.</param>
+        public static async Task BulkAddAsync<TEntity>
+            (
+                this NpgsqlConnection connection,
+                IEnumerable<TEntity> entities,
+                Action<IPgpMapper, TEntity> mapEntity,
+                string schemaName,
+                string tableName
+            )
+            where TEntity : class
+        {
+            var bulkOperation = new PgpBulkOperation();
+            await bulkOperation.BulkAddAsync(connection, entities, mapEntity, schemaName, tableName);
+        }
 
         /// <summary>
-        /// Adds entities to a target table defined by schemaName and tableName
+        /// Adds entities to a target table using Postgres COPY command
         /// </summary>
-        /// <typeparam name="TEntity"></typeparam>
-        /// <param name="fullTableName">
-        ///     Full database table name. Include double quotes for schema/table names where
-        ///     applicable (ex. public."Test", "Test"."HelloWorld", test.sample)
-        /// </param>
+        /// <param name="entities">Entities to add into the destination table</param>
+        /// <param name="mapEntity">Map action to execute for a single entity when entites are being added to the destination table</param>
+        /// <param name="schemaName">Destination schema to add entities into. If schema name requires double quotes, add them as escaped quotes in the string being passed in.</param>
+        /// <param name="tableName">Destination table to add entities into. If table name requires double quotes, add them as escaped quotes in the string being passed in.</param>
         public static void BulkAdd<TEntity>
             (
                 this NpgsqlConnection connection,
@@ -28,76 +46,8 @@ namespace PgPartner
             )
             where TEntity : class
         {
-            var fullTableName = $"{schemaName}.{tableName}";
-
-            var (columnNames, columnValuesCollection) = GetMappingContext(entities, mapEntity);
-
-            var copyColumns = columnNames.Aggregate((x, y) => $"{x},{y}");
-
-            var command = string.Format(CopyCommand, fullTableName, copyColumns);
-            using var writer = connection.BeginBinaryImport(command);
-
-            foreach (var columnValues in columnValuesCollection)
-            {
-                writer.StartRow();
-
-                foreach (var (value, dbType) in columnValues)
-                {
-                    if (value == null)
-                    {
-                        writer.WriteNull();
-                    }
-                    else
-                    {
-                        writer.Write(value, dbType);
-                    }
-                }
-            }
-
-            try
-            {
-                writer.Complete();
-                writer.Close();
-            }
-            catch (PostgresException pex)
-            {
-                if (pex.Message == "08P01: insufficient data left in message")
-                {
-                    throw new Exception($"Postgres error most likely caused by invalid .NET to NpgsqlDbType mapping. Postgres Exception: {pex.Message}");
-                }
-
-                throw;
-            }
-            finally
-            {
-                writer.Dispose();
-            }
-        }
-
-        private static (IEnumerable<string>, List<List<(object, NpgsqlDbType)>>) GetMappingContext<TEntity>
-            (
-                IEnumerable<TEntity> entities,
-                Action<IPgpMapper, TEntity> mapEntity
-            )
-            where TEntity : class
-        {
-            var mapper = new PgpMapProxy();
-
-            var columnValuesCollection = new List<List<(object, NpgsqlDbType)>>();
-
-            foreach (var entity in entities)
-            {
-                mapEntity(mapper, entity);
-
-                mapper.DisableColumnNameCollect();
-
-                var columnValuesCopy = new List<(object, NpgsqlDbType)>(mapper.ColumnValues);
-                columnValuesCollection.Add(columnValuesCopy);
-
-                mapper.ClearColumnValueCollection();
-            }
-
-            return (mapper.ColumnNames, columnValuesCollection);
+            var bulkOperation = new PgpBulkOperation();
+            bulkOperation.BulkAdd(connection, entities, mapEntity, schemaName, tableName);
         }
     }
 }

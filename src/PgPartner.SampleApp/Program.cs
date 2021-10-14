@@ -1,22 +1,23 @@
 ﻿using Npgsql;
 using NpgsqlTypes;
 using System;
+using System.Threading.Tasks;
 
 namespace PgPartner.SampleApp
 {
     class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             using var conn = new NpgsqlConnection("Server=localhost; Port=5432; Database=test; Username=postgres; Password=admin;");
-            conn.Open();
+            await conn.OpenAsync();
 
             var sampleApp = new SampleApp();
             sampleApp.CreateSampleTable(conn);
 
             var samples = sampleApp.GetSamples();
 
-            conn.BulkAdd(
+            await conn.BulkAddAsync(
                 samples,
                 (mapper, sample) => {
                     mapper.Map("id", sample.Id, NpgsqlDbType.Uuid);
