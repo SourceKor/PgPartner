@@ -3,6 +3,15 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <LangVersion>9.0</LangVersion>
+    <Authors>SourceKor, Oleg Krysko</Authors>
+    <Description>Npgsql extensions that simplify bulk operations</Description>
+    <RepositoryUrl>https://github.com/SourceKor/PgPartner</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/SourceKor/PgPartner</PackageProjectUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <IncludeSource>True</IncludeSource>
+    <IncludeSymbols>True</IncludeSymbols>
+    <PackageTags>postgres, postgresql, npgsql, npgsql-copy, postgresql-copy, bulkadd</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
