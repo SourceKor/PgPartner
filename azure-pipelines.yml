@@ -29,7 +29,8 @@ variables:
   buildConfiguration: 'Release'
 
 stages:
-  - stage: Build and Test
+  - stage: Build_Test
+    displayName: Build and Test
     jobs:
       - job: Build_Test
         displayName: Build and Test
