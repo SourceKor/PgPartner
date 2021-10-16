@@ -71,6 +71,7 @@ stages:
           - download: current
             displayName: Download Release Artifacts
             artifact: NuGetPackage
+            path: $(Pipeline.Workspace)/Release
           - bash: ./cicd/deploy.sh $(NUGET_KEY)
             displayName: Deploy
     
