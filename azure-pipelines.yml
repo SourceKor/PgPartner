@@ -52,7 +52,7 @@ stages:
 
 
   - stage: Deploy
-    dependsOn: Build and Test
+    dependsOn: Build_Test
     condition:
       in(
         succeeded('Build and Test'),
