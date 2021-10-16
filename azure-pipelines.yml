@@ -41,7 +41,7 @@ stages:
         condition:
           in(
             succeeded('Build and Test'),
-            and(succeeded(), eq(parameters.deploy, 'true')),
+            and(succeeded(), eq('${{ parameters.deploy }}', 'true')),
             and(succeeded(), startsWith(variables['Build.SourceBranchName'], 'v'))
           )
         steps:
@@ -55,7 +55,7 @@ stages:
     condition:
       in(
         succeeded('Build and Test'),
-        and(succeeded(), eq(parameters.deploy, 'true')),
+        and(succeeded(), eq('${{ parameters.deploy }}', 'true')),
         and(succeeded(), startsWith(variables['Build.SourceBranchName'], 'v'))
       )
     jobs:
