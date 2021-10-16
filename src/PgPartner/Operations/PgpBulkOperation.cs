@@ -59,54 +59,6 @@ namespace PgPartner.Operations
             }
         }
 
-        public void BulkAdd<TEntity>
-            (
-                NpgsqlConnection connection,
-                IEnumerable<TEntity> entities,
-                Action<IPgpMapper, TEntity> mapEntity,
-                string schemaName,
-                string tableName
-            )
-            where TEntity : class
-        {
-            var (columnNames, columnValuesCollection) = BuildMappingContext(entities, mapEntity);
-            var command = BuildCopyCommand(schemaName, tableName, columnNames);
-
-            using var writer = connection.BeginBinaryImport(command);
-
-            foreach (var columnValues in columnValuesCollection)
-            {
-                writer.StartRow();
-
-                foreach (var (value, dbType) in columnValues)
-                {
-                    if (value == null)
-                    {
-                        writer.WriteNull();
-                    }
-                    else
-                    {
-                        writer.Write(value, dbType);
-                    }
-                }
-            }
-
-            try
-            {
-                writer.Complete();
-                writer.Close();
-            }
-            catch (PostgresException pex)
-            {
-                HandlePostgresException(pex);
-                throw;
-            }
-            finally
-            {
-                writer.Dispose();
-            }
-        }
-
         private string BuildCopyCommand(string schemaName, string tableName, IEnumerable<string> columnNames)
         {
             var fullTableName = GetFullTableName(schemaName, tableName);

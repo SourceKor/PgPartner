@@ -47,7 +47,10 @@ namespace PgPartner
             where TEntity : class
         {
             var bulkOperation = new PgpBulkOperation();
-            bulkOperation.BulkAdd(connection, entities, mapEntity, schemaName, tableName);
+            bulkOperation.BulkAddAsync(connection, entities, mapEntity, schemaName, tableName)
+                .ConfigureAwait(false)
+                .GetAwaiter()
+                .GetResult();
         }
     }
 }
