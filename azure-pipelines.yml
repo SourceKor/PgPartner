@@ -1,5 +1,18 @@
 trigger:
-- main
+  branches:
+    include:
+      - main
+  paths:
+    exclude:
+      - '*.md'
+
+pr:
+  branches:
+    include:
+      - main
+  paths:
+    exclude:
+      - '*.md'
 
 pool:
   vmImage: 'windows-latest'
