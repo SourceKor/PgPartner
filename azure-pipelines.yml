@@ -72,7 +72,7 @@ stages:
             displayName: Download Release Artifacts
             inputs:
               artifact: NuGetPackage
-              path: $(Pipeline.Workspace)/Release
+              path: $(System.DefaultWorkingDirectory)/Release
           - bash: ./cicd/deploy.sh $(NUGET_KEY)
             displayName: Deploy
     
