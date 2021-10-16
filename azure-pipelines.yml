@@ -44,7 +44,7 @@ stages:
         dependsOn: Build_Test
         condition:
           in(
-            succeeded('Build and Test'),
+            succeeded(),
             and(succeeded(), eq('${{ parameters.deploy }}', 'true')),
             and(succeeded(), startsWith(variables['Build.SourceBranchName'], 'v'))
           )
