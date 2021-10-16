@@ -4,21 +4,51 @@ trigger:
 pool:
   vmImage: 'windows-latest'
 
+parameters:
+  - name: deploy
+    displayName: Deploy
+    type: boolean
+    default: false
+
 variables:
   solution: '**/*.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
 
-steps:
-- task: NuGetToolInstaller@1
+stages:
+  - stage: Build and Test
+    jobs:
+      - job: Build_Test
+        displayName: Build and Test
+        steps:
+          - bash: dotnet tool install Cake.Tool --version 1.3.0 --global
+          - bash: dotnet cake
+      - job: NuGet_Package
+        displayName: NuGet Package
+        condition:
+          in(
+            succeeded('Build and Test'),
+            and(succeeded(), eq(parameters.deploy, 'true')),
+            and(succeeded(), startsWith(variables['Build.SourceBranchName'], 'v'))
+          )
+        steps:
+          - bash: ./cicd/package.sh $(Build.SourceBranchName)
+          - publish: $(System.DefaultWorkingDirectory)/src/PgPartner/bin/Release
+            artifact: NuGetPackage
 
-- task: NuGetCommand@2
-  inputs:
-    restoreSolution: '$(solution)'
 
-- task: VSBuild@1
-  inputs:
-    solution: '$(solution)'
-    msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:DesktopBuildPackageLocation="$(build.artifactStagingDirectory)\WebApp.zip" /p:DeployIisAppPath="Default Web Site"'
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
+  - stage: Deploy
+    dependsOn: Build and Test
+    condition:
+      in(
+        succeeded('Build and Test'),
+        and(succeeded(), eq(parameters.deploy, 'true')),
+        and(succeeded(), startsWith(variables['Build.SourceBranchName'], 'v'))
+      )
+    jobs:
+      - job: Deploy
+        steps:
+          - download: current
+            artifact: NuGetPackage
+          - bash: ./cicd/deploy.sh $(NUGET_KEY)
+    
