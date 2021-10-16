@@ -8,4 +8,5 @@ fi
 version=`echo $1 | sed -e "s/^v//g"`
 
 cd src/PgPartner
-dotnet pack /p:PackageVersion=$version -o bin/Release
+ls
+dotnet pack -p:PackageVersion=$version -o bin/Release
