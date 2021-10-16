@@ -68,10 +68,11 @@ stages:
     jobs:
       - job: Deploy
         steps:
-          - download: current
+          - task: DownloadPipelineArtifact@2
             displayName: Download Release Artifacts
-            artifact: NuGetPackage
-            path: $(Pipeline.Workspace)/Release
+            inputs:
+              artifact: NuGetPackage
+              path: $(Pipeline.Workspace)/Release
           - bash: ./cicd/deploy.sh $(NUGET_KEY)
             displayName: Deploy
     
