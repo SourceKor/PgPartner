@@ -39,28 +39,29 @@ stages:
             displayName: Install Cake Tool
           - bash: dotnet cake
             displayName: Build and Test
-      - job: NuGet_Package
-        displayName: NuGet Package
-        dependsOn: Build_Test
-        condition:
-          in(
-            succeeded(),
-            and(succeeded(), eq('${{ parameters.deploy }}', 'true')),
-            and(succeeded(), startsWith(variables['Build.SourceBranchName'], 'v'))
-          )
-        steps:
           - bash: ./cicd/package.sh $(Build.SourceBranchName)
+            condition:
+              in(
+                succeeded(),
+                and(succeeded(), eq('${{ parameters.deploy }}', 'true')),
+                and(succeeded(), startsWith(variables['Build.SourceBranchName'], 'v'))
+              )
             displayName: Build Package
           - publish: $(System.DefaultWorkingDirectory)/src/PgPartner/bin/Release
             displayName: Publish Release Artifacts
             artifact: NuGetPackage
-
+            condition:
+              in(
+                succeeded(),
+                and(succeeded(), eq('${{ parameters.deploy }}', 'true')),
+                and(succeeded(), startsWith(variables['Build.SourceBranchName'], 'v'))
+              )
 
   - stage: Deploy
     dependsOn: Build_Test
     condition:
       in(
-        succeeded('Build and Test'),
+        succeeded(),
         and(succeeded(), eq('${{ parameters.deploy }}', 'true')),
         and(succeeded(), startsWith(variables['Build.SourceBranchName'], 'v'))
       )
