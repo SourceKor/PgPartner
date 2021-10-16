@@ -36,9 +36,12 @@ stages:
         displayName: Build and Test
         steps:
           - bash: dotnet tool install Cake.Tool --version 1.3.0 --global
+            displayName: Install Cake Tool
           - bash: dotnet cake
+            displayName: Build and Test
       - job: NuGet_Package
         displayName: NuGet Package
+        dependsOn: Build_Test
         condition:
           in(
             succeeded('Build and Test'),
@@ -47,7 +50,9 @@ stages:
           )
         steps:
           - bash: ./cicd/package.sh $(Build.SourceBranchName)
+            displayName: Build Package
           - publish: $(System.DefaultWorkingDirectory)/src/PgPartner/bin/Release
+            displayName: Publish Release Artifacts
             artifact: NuGetPackage
 
 
@@ -63,6 +68,8 @@ stages:
       - job: Deploy
         steps:
           - download: current
+            displayName: Download Release Artifacts
             artifact: NuGetPackage
           - bash: ./cicd/deploy.sh $(NUGET_KEY)
+            displayName: Deploy
     
