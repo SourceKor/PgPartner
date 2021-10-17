@@ -8,6 +8,7 @@ using PgPartner.Test.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace PgPartner.Test
 {
@@ -42,13 +43,7 @@ namespace PgPartner.Test
         public void BulkAdd()
         {
             // Arrange
-            var expectedTestItems = new List<TestItem>
-            {
-                new TestItem { Id = Guid.NewGuid(), Text = "Test", Number = 10 },
-                new TestItem { Id = Guid.NewGuid(), Text = "Test2", Number = 20 },
-                new TestItem { Id = Guid.NewGuid(), Text = "Test3", Number = 30 },
-                new TestItem { Id = Guid.NewGuid(), Text = "Test4", Number = 40 }
-            };
+            var expectedTestItems = GetTestItems();
 
             // Act
             _connection.BulkAdd(
@@ -59,7 +54,37 @@ namespace PgPartner.Test
                     mapper.Map("number", entity.Number, NpgsqlDbType.Integer);
                 }, "public", "\"TestItems\"");
 
-            var actualTestItems = _connection.Query<TestItem>("select * from public.\"TestItems\"");
+            var actualTestItems = QueryTestItems();
+
+            // Assert
+            actualTestItems.Should().HaveCount(4);
+
+            foreach (var expectedItem in expectedTestItems)
+            {
+                var actualResult = actualTestItems.FirstOrDefault(a => a.Id == expectedItem.Id);
+                actualResult.Should().NotBeNull();
+
+                actualResult.Text.Should().Be(expectedItem.Text);
+                actualResult.Number.Should().Be(expectedItem.Number);
+            }
+        }
+
+        [TestMethod]
+        public async Task BulkAddAsync()
+        {
+            // Arrange
+            var expectedTestItems = GetTestItems();
+
+            // Act
+            await _connection.BulkAddAsync(
+                expectedTestItems,
+                (mapper, entity) => {
+                    mapper.Map("id", entity.Id, NpgsqlDbType.Uuid);
+                    mapper.Map("text", entity.Text, NpgsqlDbType.Varchar);
+                    mapper.Map("number", entity.Number, NpgsqlDbType.Integer);
+                }, "public", "\"TestItems\"");
+
+            var actualTestItems = QueryTestItems();
 
             // Assert
             actualTestItems.Should().HaveCount(4);
@@ -82,5 +107,17 @@ namespace PgPartner.Test
 
             _connection.Dispose();
         }
+
+        private IEnumerable<TestItem> GetTestItems() =>
+            new List<TestItem>
+            {
+                new TestItem { Id = Guid.NewGuid(), Text = "Test", Number = 10 },
+                new TestItem { Id = Guid.NewGuid(), Text = "Test2", Number = 20 },
+                new TestItem { Id = Guid.NewGuid(), Text = "Test3", Number = 30 },
+                new TestItem { Id = Guid.NewGuid(), Text = "Test4", Number = 40 }
+            };
+
+        private IEnumerable<TestItem> QueryTestItems() =>
+            _connection.Query<TestItem>("select * from public.\"TestItems\"");
     }
 }
