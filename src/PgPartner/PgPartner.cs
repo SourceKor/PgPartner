@@ -52,5 +52,15 @@ namespace PgPartner
                 .GetAwaiter()
                 .GetResult();
         }
+
+        public static void CreateMirrorTempTable
+            (
+                this NpgsqlConnection connection,
+                string schemaName,
+                string tableName
+            )
+        {
+            
+        }
     }
 }
