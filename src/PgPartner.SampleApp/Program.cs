@@ -17,6 +17,8 @@ namespace PgPartner.SampleApp
 
             var samples = sampleApp.GetSamples();
 
+            await conn.CopyTableAsTempAsync(sampleApp.Schema, sampleApp.Table);
+
             await conn.BulkAddAsync(
                 samples,
                 (mapper, sample) => {
