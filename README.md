@@ -1,3 +1,5 @@
+[![Build Status](https://dev.azure.com/okrysko/PgPartner/_apis/build/status/SourceKor.PgPartner?branchName=main)](https://dev.azure.com/okrysko/PgPartner/_build/latest?definitionId=4&branchName=main)
+
 # PgPartner (PostgreSQL Partner)
 
 This .NET library extends [Npgsql](https://www.npgsql.org/) functions to simplify certain PostgreSQL tasks, including:
