@@ -60,17 +60,19 @@ namespace PgPartner
         /// <param name="schemaName">Source schema of the table to mirror</param>
         /// <param name="tableName">Source table to mirror</param>
         /// <param name="tempTableName">Temp table name to use, if nothing is passed the default will be tmp_<tableName></param>
+        /// <param name="commitOptions">The behavior that can be controlled at the end of a transaction block</param>
         /// <returns>Temp table details</returns>
         public static TableDetails CopyTableAsTemp
             (
                 this NpgsqlConnection connection,
                 string schemaName,
                 string tableName,
-                string tempTableName = null
+                string tempTableName = null,
+                OnCommitOptions commitOptions = OnCommitOptions.PreserveRows
             )
         {
             var operation = new PgpOperation();
-            return operation.CopyTableAsTempAsync(connection, schemaName, tableName, tempTableName)
+            return operation.CopyTableAsTempAsync(connection, schemaName, tableName, tempTableName, commitOptions)
                 .ConfigureAwait(false)
                 .GetAwaiter()
                 .GetResult();
@@ -82,17 +84,19 @@ namespace PgPartner
         /// <param name="schemaName">Source schema of the table to mirror</param>
         /// <param name="tableName">Source table to mirror</param>
         /// <param name="tempTableName">Temp table name to use, if nothing is passed the default will be tmp_<tableName></param>
+        /// <param name="commitOptions">The behavior that can be controlled at the end of a transaction block</param>
         /// <returns>Temp table details</returns>
         public static async Task<TableDetails> CopyTableAsTempAsync
             (
                 this NpgsqlConnection connection,
                 string schemaName,
                 string tableName,
-                string tempTableName = null
+                string tempTableName = null,
+                OnCommitOptions commitOptions = OnCommitOptions.PreserveRows
             )
         {
             var operation = new PgpOperation();
-            return await operation.CopyTableAsTempAsync(connection, schemaName, tableName, tempTableName);
+            return await operation.CopyTableAsTempAsync(connection, schemaName, tableName, tempTableName, commitOptions);
         }
     }
 }

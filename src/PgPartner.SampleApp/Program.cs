@@ -1,5 +1,6 @@
 ﻿using Npgsql;
 using NpgsqlTypes;
+using PgPartner.Models;
 using System;
 using System.Threading.Tasks;
 

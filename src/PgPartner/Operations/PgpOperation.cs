@@ -23,7 +23,8 @@ namespace PgPartner.Operations
                 NpgsqlConnection connection,
                 string schemaName,
                 string tableName,
-                string tempTableName = null
+                string tempTableName = null,
+                OnCommitOptions commitOptions = OnCommitOptions.PreserveRows
             )
         {
             var tempTable = string.IsNullOrWhiteSpace(tempTableName)
@@ -37,7 +38,15 @@ namespace PgPartner.Operations
                 return existingTempTableDetails;
             }
 
-            var cloneCommandText = string.Format(CreateTempTableQuery, tempTable, GetFullTableName(schemaName, tableName));
+            var options = commitOptions switch
+            {
+                OnCommitOptions.PreserveRows => "on commit preserve rows",
+                OnCommitOptions.DeleteRows => "on commit delete rows",
+                OnCommitOptions.Drop => "on commit drop",
+                _ => throw new ArgumentException($"Invalid {nameof(commitOptions)}")
+            };
+
+            var cloneCommandText = string.Format(CreateTempTableQuery, $"{tempTable} {options}", GetFullTableName(schemaName, tableName));
 
             using var cloneCommand = new NpgsqlCommand(cloneCommandText, connection);
             await cloneCommand.ExecuteNonQueryAsync();
