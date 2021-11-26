@@ -17,8 +17,10 @@ namespace PgPartner.SampleApp
 
             var samples = sampleApp.GetSamples();
 
-            var tableDetails = await conn.CopyTableAsTempAsync(sampleApp.Schema, sampleApp.Table, false);
+            // Create temp table
+            var tableDetails = await conn.CopyTableAsTempAsync(sampleApp.Schema, sampleApp.Table);
 
+            // Add records to temp table
             await conn.BulkAddAsync(
                 samples,
                 (mapper, sample) => {
@@ -36,15 +38,16 @@ namespace PgPartner.SampleApp
                 tableDetails.TableName
             );
 
-            var queryTempCommand = new NpgsqlCommand("select * from tmp_samples", conn);
-            var tempReader = await queryTempCommand.ExecuteReaderAsync();
+            // Verify records were inserted
+            using var queryTempCommand = new NpgsqlCommand("select * from tmp_samples", conn);
+            using var tempReader = await queryTempCommand.ExecuteReaderAsync();
 
             while (await tempReader.ReadAsync())
             {
                 Console.WriteLine($"{tempReader[0]} - {tempReader[1]} - {tempReader[2]}");
             }
 
-            await conn.CopyTableAsTempAsync(sampleApp.Schema, sampleApp.Table);
+            await tempReader.CloseAsync();
 
             Console.WriteLine("Done!");
             Console.ReadKey();

@@ -16,26 +16,25 @@ namespace PgPartner.Operations
                    ,table_name
                    ,table_type
             from information_schema.tables
-            where table_name = @tableName";
+            where lower(table_name) = lower(@tableName)";
 
         public async Task<TableDetails> CopyTableAsTempAsync
             (
                 NpgsqlConnection connection,
                 string schemaName,
                 string tableName,
-                bool throwExceptionOnExists = true
+                string tempTableName = null
             )
         {
-            var tempTable = $"tmp_{tableName.Replace("\"", string.Empty)}";
+            var tempTable = string.IsNullOrWhiteSpace(tempTableName)
+                ? $"tmp_{tableName.Replace("\"", string.Empty)}"
+                : tempTableName;
 
-            if (throwExceptionOnExists)
+            var existingTempTableDetails = await GetTempTableDetails(connection, tempTable);
+
+            if (existingTempTableDetails != null)
             {
-                var tempTableExistsResult = GetTempTableDetails(connection, tempTable);
-
-                if (tempTableExistsResult != null)
-                {
-                    throw new Exception($"Attempted to create {tempTable}, however this table already exists");
-                }
+                return existingTempTableDetails;
             }
 
             var cloneCommandText = string.Format(CreateTempTableQuery, tempTable, GetFullTableName(schemaName, tableName));
@@ -51,12 +50,12 @@ namespace PgPartner.Operations
             using var queryCommand = new NpgsqlCommand(TempTableExistsQuery, connection);
             queryCommand.Parameters.AddWithValue("tableName", tempTableName);
             
-            var reader = await queryCommand.ExecuteReaderAsync();
+            using var reader = await queryCommand.ExecuteReaderAsync();
             TableDetails result = null;
 
             while (await reader.ReadAsync())
             {
-                if (reader[0] != null)
+                if (reader.HasRows)
                 {
                     result = new TableDetails
                     {
