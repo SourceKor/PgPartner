@@ -53,14 +53,43 @@ namespace PgPartner
                 .GetResult();
         }
 
+        /// <summary>
+        /// Creates a temp table that mirrors the source table that's passed in
+        /// </summary>
+        /// <param name="schemaName">Source schema of the table to mirror</param>
+        /// <param name="tableName">Source table to mirror</param>
+        /// <param name="throwExceptionOnExists">Throws an exception if the temp table to be created already exists [default = true]</param>
         public static void CreateMirrorTempTable
             (
                 this NpgsqlConnection connection,
                 string schemaName,
-                string tableName
+                string tableName,
+                bool throwExceptionOnExists = true
             )
         {
-            
+            var operation = new PgpOperation();
+            operation.CreateMirrorTempTableAsync(connection, schemaName, tableName, throwExceptionOnExists)
+                .ConfigureAwait(false)
+                .GetAwaiter()
+                .GetResult();
+        }
+
+        /// <summary>
+        /// Creates a temp table that mirrors the source table that's passed in
+        /// </summary>
+        /// <param name="schemaName">Source schema of the table to mirror</param>
+        /// <param name="tableName">Source table to mirror</param>
+        /// <param name="throwExceptionOnExists">Throws an exception if the temp table to be created already exists [default = true]</param>
+        public static async Task CreateMirrorTempTableAsync
+            (
+                this NpgsqlConnection connection,
+                string schemaName,
+                string tableName,
+                bool throwExceptionOnExists = true
+            )
+        {
+            var operation = new PgpOperation();
+            await operation.CreateMirrorTempTableAsync(connection, schemaName, tableName, throwExceptionOnExists);
         }
     }
 }
