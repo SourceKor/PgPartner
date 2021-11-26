@@ -1,4 +1,5 @@
 ﻿using Npgsql;
+using PgPartner.Models;
 using PgPartner.Operations;
 using System;
 using System.Collections.Generic;
@@ -59,7 +60,8 @@ namespace PgPartner
         /// <param name="schemaName">Source schema of the table to mirror</param>
         /// <param name="tableName">Source table to mirror</param>
         /// <param name="throwExceptionOnExists">Throws an exception if the temp table to be created already exists [default = true]</param>
-        public static void CopyTableAsTemp
+        /// <returns>Temp table details</returns>
+        public static TableDetails CopyTableAsTemp
             (
                 this NpgsqlConnection connection,
                 string schemaName,
@@ -68,7 +70,7 @@ namespace PgPartner
             )
         {
             var operation = new PgpOperation();
-            operation.CopyTableAsTempAsync(connection, schemaName, tableName, throwExceptionOnExists)
+            return operation.CopyTableAsTempAsync(connection, schemaName, tableName, throwExceptionOnExists)
                 .ConfigureAwait(false)
                 .GetAwaiter()
                 .GetResult();
@@ -80,7 +82,8 @@ namespace PgPartner
         /// <param name="schemaName">Source schema of the table to mirror</param>
         /// <param name="tableName">Source table to mirror</param>
         /// <param name="throwExceptionOnExists">Throws an exception if the temp table to be created already exists [default = true]</param>
-        public static async Task CopyTableAsTempAsync
+        /// <returns>Temp table details</returns>
+        public static async Task<TableDetails> CopyTableAsTempAsync
             (
                 this NpgsqlConnection connection,
                 string schemaName,
@@ -89,7 +92,7 @@ namespace PgPartner
             )
         {
             var operation = new PgpOperation();
-            await operation.CopyTableAsTempAsync(connection, schemaName, tableName, throwExceptionOnExists);
+            return await operation.CopyTableAsTempAsync(connection, schemaName, tableName, throwExceptionOnExists);
         }
     }
 }

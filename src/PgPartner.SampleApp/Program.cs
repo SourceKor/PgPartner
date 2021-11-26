@@ -17,7 +17,7 @@ namespace PgPartner.SampleApp
 
             var samples = sampleApp.GetSamples();
 
-            await conn.CopyTableAsTempAsync(sampleApp.Schema, sampleApp.Table);
+            var tableDetails = await conn.CopyTableAsTempAsync(sampleApp.Schema, sampleApp.Table, false);
 
             await conn.BulkAddAsync(
                 samples,
@@ -32,9 +32,19 @@ namespace PgPartner.SampleApp
                     mapper.Map("test2", sample.Test2, NpgsqlDbType.Boolean);
                     mapper.Map("test3", sample.Test3, NpgsqlDbType.Inet);
                 },
-                sampleApp.Schema,
-                sampleApp.Table
+                tableDetails.SchemaName,
+                tableDetails.TableName
             );
+
+            var queryTempCommand = new NpgsqlCommand("select * from tmp_samples", conn);
+            var tempReader = await queryTempCommand.ExecuteReaderAsync();
+
+            while (await tempReader.ReadAsync())
+            {
+                Console.WriteLine($"{tempReader[0]} - {tempReader[1]} - {tempReader[2]}");
+            }
+
+            await conn.CopyTableAsTempAsync(sampleApp.Schema, sampleApp.Table);
 
             Console.WriteLine("Done!");
             Console.ReadKey();
