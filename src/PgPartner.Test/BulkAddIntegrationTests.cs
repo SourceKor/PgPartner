@@ -14,9 +14,9 @@ namespace PgPartner.Test
 {
     [TestClass]
     [TestCategory(TestCategories.Integration)]
-    public class BulkAddIntegrationTests
+    public class BulkAddIntegrationTests : PostgresIntegrationTest
     {
-        private static string CreateTestItemsTable = @"
+        private const string CreateTestItemsTable = @"
             create extension if not exists ""uuid-ossp"";
 
             create table public.""TestItems"" (
@@ -25,17 +25,11 @@ namespace PgPartner.Test
                 number          int null
             );";
 
-        private static string DropTestItemsTable = @"drop table public.""TestItems"";";
+        private const string DropTestItemsTable = @"drop table public.""TestItems"";";
 
-        private NpgsqlConnection _connection;
-
-        [TestInitialize]
-        public void SetUp()
+        protected override void PostSetup()
         {
-            _connection = new NpgsqlConnection("Server=localhost; Port=5432; Database=test; Username=postgres; Password=admin;");
-            _connection.Open();
-
-            var createTableCommand = new NpgsqlCommand(CreateTestItemsTable, _connection);
+            var createTableCommand = new NpgsqlCommand(CreateTestItemsTable, Connection);
             createTableCommand.ExecuteNonQuery();
         }
 
@@ -46,7 +40,7 @@ namespace PgPartner.Test
             var expectedTestItems = GetTestItems();
 
             // Act
-            _connection.BulkAdd(
+            Connection.BulkAdd(
                 expectedTestItems,
                 (mapper, entity) => {
                     mapper.Map("id", entity.Id, NpgsqlDbType.Uuid);
@@ -76,7 +70,7 @@ namespace PgPartner.Test
             var expectedTestItems = GetTestItems();
 
             // Act
-            await _connection.BulkAddAsync(
+            await Connection.BulkAddAsync(
                 expectedTestItems,
                 (mapper, entity) => {
                     mapper.Map("id", entity.Id, NpgsqlDbType.Uuid);
@@ -100,12 +94,12 @@ namespace PgPartner.Test
         }
 
         [TestCleanup]
-        public void TearDown()
+        public new void TearDown()
         {
-            var dropTableCommand = new NpgsqlCommand(DropTestItemsTable, _connection);
+            using var dropTableCommand = new NpgsqlCommand(DropTestItemsTable, Connection);
             dropTableCommand.ExecuteNonQuery();
 
-            _connection.Dispose();
+            base.TearDown();
         }
 
         private IEnumerable<TestItem> GetTestItems() =>
@@ -118,6 +112,6 @@ namespace PgPartner.Test
             };
 
         private IEnumerable<TestItem> QueryTestItems() =>
-            _connection.Query<TestItem>("select * from public.\"TestItems\"");
+            Connection.Query<TestItem>("select * from public.\"TestItems\"");
     }
 }

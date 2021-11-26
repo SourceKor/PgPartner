@@ -55,7 +55,7 @@ namespace PgPartner
         }
 
         /// <summary>
-        /// Creates a temp table (with a default name of tmp_<tableName> if tempTableName is not passed) that mirrors the source table passed in
+        /// Creates an empty temp table (with a default name of tmp_<tableName> if tempTableName is not passed) that mirrors the source table passed in
         /// </summary>
         /// <param name="schemaName">Source schema of the table to mirror</param>
         /// <param name="tableName">Source table to mirror</param>
@@ -79,7 +79,7 @@ namespace PgPartner
         }
 
         /// <summary>
-        /// Creates a temp table (with a default name of tmp_<tableName> if tempTableName is not passed) that mirrors the source table passed in
+        /// Creates an empty temp table (with a default name of tmp_<tableName> if tempTableName is not passed) that mirrors the source table passed in
         /// </summary>
         /// <param name="schemaName">Source schema of the table to mirror</param>
         /// <param name="tableName">Source table to mirror</param>

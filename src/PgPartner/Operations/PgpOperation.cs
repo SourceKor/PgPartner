@@ -7,9 +7,11 @@ namespace PgPartner.Operations
 {
     internal class PgpOperation : OperationBase
     {
-        private const string CreateTempTableQuery = @"
-            create temporary table {0} as
-            select * from {1}";
+        private const string CreateTempTableCommand = @"
+            create temporary table {0} {1} as
+            select * from {2};
+
+            truncate table {0};";
 
         private const string TempTableExistsQuery = @"
             select table_schema
@@ -46,7 +48,7 @@ namespace PgPartner.Operations
                 _ => throw new ArgumentException($"Invalid {nameof(commitOptions)}")
             };
 
-            var cloneCommandText = string.Format(CreateTempTableQuery, $"{tempTable} {options}", GetFullTableName(schemaName, tableName));
+            var cloneCommandText = string.Format(CreateTempTableCommand, tempTable, options, GetFullTableName(schemaName, tableName));
 
             using var cloneCommand = new NpgsqlCommand(cloneCommandText, connection);
             await cloneCommand.ExecuteNonQueryAsync();
