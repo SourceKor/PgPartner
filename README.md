@@ -3,8 +3,8 @@
 This .NET library extends [Npgsql](https://www.npgsql.org/) functions to simplify certain PostgreSQL tasks, including:
  - [BulkAdd](#bulkadd-npgsqlconnection-extension) (using PostgreSQL COPY function)
  - [BulkAddAsync](#bulkadd-npgsqlconnection-extension) (using PostgreSQL COPY function)
- - [CopyTableAsTemp]() - Creates an empty temporary table that mirrors an existing table
- - [CopyTableAsTempAsync]() - Creates an empty temporary table that mirrors an existing table
+ - [CopyTableAsTemp](#copytableastemp-npgsqlconnection-extension) - Creates an empty temporary table that mirrors an existing table
+ - [CopyTableAsTempAsync](#copytableastemp-npgsqlconnection-extension) - Creates an empty temporary table that mirrors an existing table
 
 ## BulkAdd (NpgsqlConnection extension)
 This command utilizes the PostgreSQL COPY function to perform an optimized insert of .NET objects into a PostgreSQL database table of your choice.
