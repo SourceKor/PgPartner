@@ -5,14 +5,17 @@
     <LangVersion>9.0</LangVersion>
     <Authors>SourceKor, Oleg Krysko</Authors>
     <Company>SourceKor</Company>
-    <Description>Npgsql extensions that simplify bulk operations using the PostgreSQL COPY command</Description>
+    <Description>Npgsql extensions that simplify various operations:
+
+- Fast bulk add
+- Create temporary table as mirror of existing table</Description>
     <RepositoryUrl>https://github.com/SourceKor/PgPartner</RepositoryUrl>
     <PackageProjectUrl>https://github.com/SourceKor/PgPartner</PackageProjectUrl>
     <RepositoryType>git</RepositoryType>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <IncludeSource>True</IncludeSource>
     <IncludeSymbols>True</IncludeSymbols>
-    <PackageTags>postgres, postgresql, npgsql, npgsql-copy, postgresql-copy, postgres copy, bulkadd</PackageTags>
+    <PackageTags>postgres, postgresql, npgsql, npgsql-copy, postgresql-copy, postgres copy, bulkadd, temp-table, upsert-to-temp, sync-data</PackageTags>
     <PackageIcon>PgPartner.png</PackageIcon>
   </PropertyGroup>
 
