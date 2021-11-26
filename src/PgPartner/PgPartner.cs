@@ -54,12 +54,12 @@ namespace PgPartner
         }
 
         /// <summary>
-        /// Creates a temp table that mirrors the source table that's passed in
+        /// Creates a temp table with a name of 'tmp_<tableName>' that mirrors the source table passed in
         /// </summary>
         /// <param name="schemaName">Source schema of the table to mirror</param>
         /// <param name="tableName">Source table to mirror</param>
         /// <param name="throwExceptionOnExists">Throws an exception if the temp table to be created already exists [default = true]</param>
-        public static void CreateMirrorTempTable
+        public static void CopyTableAsTemp
             (
                 this NpgsqlConnection connection,
                 string schemaName,
@@ -68,19 +68,19 @@ namespace PgPartner
             )
         {
             var operation = new PgpOperation();
-            operation.CreateMirrorTempTableAsync(connection, schemaName, tableName, throwExceptionOnExists)
+            operation.CopyTableAsTempAsync(connection, schemaName, tableName, throwExceptionOnExists)
                 .ConfigureAwait(false)
                 .GetAwaiter()
                 .GetResult();
         }
 
         /// <summary>
-        /// Creates a temp table that mirrors the source table that's passed in
+        /// Creates a temp table with a name of 'tmp_<tableName>' that mirrors the source table passed in
         /// </summary>
         /// <param name="schemaName">Source schema of the table to mirror</param>
         /// <param name="tableName">Source table to mirror</param>
         /// <param name="throwExceptionOnExists">Throws an exception if the temp table to be created already exists [default = true]</param>
-        public static async Task CreateMirrorTempTableAsync
+        public static async Task CopyTableAsTempAsync
             (
                 this NpgsqlConnection connection,
                 string schemaName,
@@ -89,7 +89,7 @@ namespace PgPartner
             )
         {
             var operation = new PgpOperation();
-            await operation.CreateMirrorTempTableAsync(connection, schemaName, tableName, throwExceptionOnExists);
+            await operation.CopyTableAsTempAsync(connection, schemaName, tableName, throwExceptionOnExists);
         }
     }
 }

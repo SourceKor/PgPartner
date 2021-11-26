@@ -15,7 +15,7 @@ namespace PgPartner.Operations
             from information_schema.tables
             where table_name = @tableName";
 
-        public async Task CreateMirrorTempTableAsync
+        public async Task CopyTableAsTempAsync
             (
                 NpgsqlConnection connection,
                 string schemaName,
