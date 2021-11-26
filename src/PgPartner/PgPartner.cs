@@ -55,44 +55,44 @@ namespace PgPartner
         }
 
         /// <summary>
-        /// Creates a temp table with a name of 'tmp_<tableName>' that mirrors the source table passed in
+        /// Creates a temp table (with a default name of tmp_<tableName> if tempTableName is not passed) that mirrors the source table passed in
         /// </summary>
         /// <param name="schemaName">Source schema of the table to mirror</param>
         /// <param name="tableName">Source table to mirror</param>
-        /// <param name="throwExceptionOnExists">Throws an exception if the temp table to be created already exists [default = true]</param>
+        /// <param name="tempTableName">Temp table name to use, if nothing is passed the default will be tmp_<tableName></param>
         /// <returns>Temp table details</returns>
         public static TableDetails CopyTableAsTemp
             (
                 this NpgsqlConnection connection,
                 string schemaName,
                 string tableName,
-                bool throwExceptionOnExists = true
+                string tempTableName = null
             )
         {
             var operation = new PgpOperation();
-            return operation.CopyTableAsTempAsync(connection, schemaName, tableName, throwExceptionOnExists)
+            return operation.CopyTableAsTempAsync(connection, schemaName, tableName, tempTableName)
                 .ConfigureAwait(false)
                 .GetAwaiter()
                 .GetResult();
         }
 
         /// <summary>
-        /// Creates a temp table with a name of 'tmp_<tableName>' that mirrors the source table passed in
+        /// Creates a temp table (with a default name of tmp_<tableName> if tempTableName is not passed) that mirrors the source table passed in
         /// </summary>
         /// <param name="schemaName">Source schema of the table to mirror</param>
         /// <param name="tableName">Source table to mirror</param>
-        /// <param name="throwExceptionOnExists">Throws an exception if the temp table to be created already exists [default = true]</param>
+        /// <param name="tempTableName">Temp table name to use, if nothing is passed the default will be tmp_<tableName></param>
         /// <returns>Temp table details</returns>
         public static async Task<TableDetails> CopyTableAsTempAsync
             (
                 this NpgsqlConnection connection,
                 string schemaName,
                 string tableName,
-                bool throwExceptionOnExists = true
+                string tempTableName = null
             )
         {
             var operation = new PgpOperation();
-            return await operation.CopyTableAsTempAsync(connection, schemaName, tableName, throwExceptionOnExists);
+            return await operation.CopyTableAsTempAsync(connection, schemaName, tableName, tempTableName);
         }
     }
 }
